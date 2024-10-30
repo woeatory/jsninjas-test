@@ -1,0 +1,52 @@
+services:
+  api-heroes:
+    build:
+      context: ./backend/
+      dockerfile: Dockerfile
+    container_name: api-heroes
+    env_file:
+      - backend/.env
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    ports:
+      - 8000:8000
+    restart: always
+
+  postgres-db:
+    image: postgres:latest
+    container_name: postgres-db
+    user: postgres
+    secrets:
+      - db-password
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
+      - POSTGRES_DB=application
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/database/structure.sql:/docker-entrypoint-initdb.d/1.sql
+      - ./backend/database/data.sql:/docker-entrypoint-initdb.d/2.sql
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: [ 'CMD', 'pg_isready' ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "user@domain.com"
+      PGADMIN_DEFAULT_PASSWORD: "simplepass"
+    ports:
+      - "5050:80"
+    restart: unless-stopped
+volumes:
+  postgres_data:
+secrets:
+  db-password:
+    file: backend/database/password.txt

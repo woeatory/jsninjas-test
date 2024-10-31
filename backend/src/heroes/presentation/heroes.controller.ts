@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpException,
   HttpStatus,
   Logger,
@@ -12,8 +13,9 @@ import {
   ApiBody,
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
+  ApiQuery,
 } from '@nestjs/swagger';
-import { CreateHeroResponseDto } from './dto/response.dto';
+import { HeroDto } from './dto/hero.dto';
 
 @Controller('heroes')
 export class HeroesController {
@@ -23,10 +25,10 @@ export class HeroesController {
   }
 
   @Post('create')
-  @ApiBody({ description: 'Create a new hero', type: [CreateHeroDto] })
+  @ApiBody({ description: 'Create a new hero', type: CreateHeroDto })
   @ApiCreatedResponse({
     description: 'New hero was successfully created.',
-    type: CreateHeroResponseDto,
+    type: HeroDto,
   })
   @ApiInternalServerErrorResponse({ description: 'Internal server error.' })
   async createHero(@Body() createHeroDto: CreateHeroDto) {
@@ -49,4 +51,8 @@ export class HeroesController {
       );
     }
   }
+
+  @Get()
+  @ApiQuery({})
+  async getHero() {}
 }

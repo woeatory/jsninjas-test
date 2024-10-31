@@ -1,6 +1,7 @@
 import { Hero } from '../domain/entities/hero.entity';
 
 interface PersistentHero {
+  heroId: number;
   nickname: string;
   realName: string;
   originDescription: string;
@@ -11,6 +12,7 @@ interface PersistentHero {
 export class HeroesMapper {
   static toDomain(persistentHero: PersistentHero): Hero {
     return new Hero(
+      persistentHero.heroId,
       persistentHero.nickname,
       persistentHero.realName,
       persistentHero.originDescription,

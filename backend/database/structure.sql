@@ -1,6 +1,7 @@
 CREATE TABLE
   "Hero" (
     "heroId" bigint generated always as identity,
+    "realName" varchar NOT NULL,
     "nickname" varchar NOT NULL,
     "originDescription" varchar NOT NULL,
     "superPowers" varchar NOT NULL,

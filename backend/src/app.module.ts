@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { HeroesModule } from './heroes/heroes.module';
+import { HeroesModule } from './heroes/application/heroes.module';
 import configuration from './config/configuration';
 
 @Module({

@@ -5,7 +5,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Pool } from 'pg';
 import { DatabaseConfig } from 'src/config/configuration';
 import { Hero } from '../domain/entities/hero.entity';
-import { Mapper } from './heroes.mapper';
+import { HeroesMapper } from './heroes.mapper';
 
 @Injectable()
 export class PgRepository extends HeroesRepository {
@@ -33,10 +33,10 @@ export class PgRepository extends HeroesRepository {
       ];
       const { rows } = await client.query(queryText, queryInsert);
       await client.query('COMMIT');
-      return Mapper.toDomain(rows[0]);
-    } catch (e) {
+      return HeroesMapper.toDomain(rows[0]);
+    } catch (error) {
       await client.query('ROLLBACK');
-      this.logger.error(e);
+      this.logger.error(error);
     } finally {
       client.release();
     }

@@ -1,19 +1,21 @@
 import { Hero } from '../domain/entities/hero.entity';
 
-export class Mapper {
-  static toDomain({
-    nickname,
-    realName,
-    originDescription,
-    superPowers,
-    catchPharse,
-  }): Hero {
+interface PersistentHero {
+  nickname: string;
+  realName: string;
+  originDescription: string;
+  superPowers: string;
+  catchPharse: string;
+}
+
+export class HeroesMapper {
+  static toDomain(persistentHero: PersistentHero): Hero {
     return new Hero(
-      nickname,
-      realName,
-      originDescription,
-      superPowers.split(','),
-      catchPharse,
+      persistentHero.nickname,
+      persistentHero.realName,
+      persistentHero.originDescription,
+      persistentHero.superPowers.split(','),
+      persistentHero.catchPharse,
     );
   }
 }

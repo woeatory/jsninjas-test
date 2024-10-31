@@ -16,7 +16,7 @@ export class HeroesMapper {
       persistentHero.nickname,
       persistentHero.realName,
       persistentHero.originDescription,
-      persistentHero.superPowers.split(','),
+      persistentHero.superPowers,
       persistentHero.catchPharse,
     );
   }

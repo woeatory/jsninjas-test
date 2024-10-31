@@ -1,6 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { CreateHeroInput } from '../domain/schemas/create-hero.interface';
-import { HeroesRepository } from './heroes.repository';
+import { CreateHeroPersistence, HeroesRepository } from './heroes.repository';
 import { Injectable, Logger } from '@nestjs/common';
 import { Pool } from 'pg';
 import { DatabaseConfig } from 'src/config/configuration';
@@ -19,17 +18,17 @@ export class PgRepository extends HeroesRepository {
       connectionString: config.connectionString,
     });
   }
-  async createHero(createHeroInput: CreateHeroInput): Promise<Hero> {
+  async createHero(data: CreateHeroPersistence): Promise<Hero> {
     const client = await this.pool.connect();
     try {
       client.query('BEGIN');
       const queryText = `INSERT INTO "Hero" ("nickname", "realName", "originDescription", "superPowers", "catchPhrase") VALUES ($1, $2, $3, $4, $5) RETURNING *`;
       const queryInsert = [
-        createHeroInput.nickname,
-        createHeroInput.realName,
-        createHeroInput.originDescription,
-        createHeroInput.superPowers.join(),
-        createHeroInput.catchPhrase,
+        data.nickname,
+        data.realName,
+        data.originDescription,
+        data.superPowers,
+        data.catchPhrase,
       ];
       const { rows } = await client.query(queryText, queryInsert);
       await client.query('COMMIT');

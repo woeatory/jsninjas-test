@@ -1,5 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsString } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsString } from 'class-validator';
 
 export class HeroDto {
   @ApiProperty({ description: 'heroId' })
@@ -22,14 +22,11 @@ export class HeroDto {
 
   @ApiProperty({
     description: 'List of superpowers',
-    type: [String],
-    example: [
-      'solar energy absorption and healing factor',
-      'solar flare and heat vision',
-    ],
+    example:
+      'solar energy absorption and healing factor, solar flare and heat vision',
   })
-  @IsArray()
-  superPowers: string[];
+  @IsString()
+  superPowers: string;
 
   @ApiProperty({
     description: 'Catch phrase',
@@ -37,4 +34,11 @@ export class HeroDto {
   })
   @IsString()
   catchPhrase: string;
+
+  @ApiPropertyOptional({
+    description: 'Image',
+    format: 'binary',
+    type: 'string',
+  })
+  image: any;
 }

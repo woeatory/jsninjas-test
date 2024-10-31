@@ -1,7 +1,7 @@
-export interface CreateHeroInput {
+export interface CreateHero {
   nickname: string;
   realName: string;
   originDescription: string;
-  superPowers: string[];
+  superPowers: string;
   catchPhrase: string;
 }

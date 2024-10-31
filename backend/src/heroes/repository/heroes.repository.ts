@@ -1,6 +1,8 @@
 import { Hero } from '../domain/entities/hero.entity';
-import { CreateHeroInput } from '../domain/schemas/create-hero.interface';
+import { CreateHero } from '../domain/schemas/create-hero.interface';
+
+export type CreateHeroPersistence = CreateHero;
 
 export abstract class HeroesRepository {
-  abstract createHero(createHeroInput: CreateHeroInput): Promise<Hero>;
+  abstract createHero(data: CreateHeroPersistence): Promise<Hero>;
 }

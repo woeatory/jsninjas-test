@@ -16,7 +16,6 @@ async function bootstrap() {
     .setTitle('Heroes API')
     .setDescription('The heroes API description')
     .setVersion('1.0')
-    .addTag('heroes')
     .build();
   const documentFactory = () =>
     SwaggerModule.createDocument(app, swaggerConfig);

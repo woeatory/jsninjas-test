@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { CreateHeroDto } from './dto/create-hero.dto';
 import { HeroesService } from '../domain/heroes.service';
+import { ApiBody, ApiResponse } from '@nestjs/swagger';
 
 @Controller('heroes')
 export class HeroesController {
@@ -15,7 +16,14 @@ export class HeroesController {
   constructor(private readonly heroesService: HeroesService) {
     this.logger = new Logger(HeroesController.name);
   }
+
   @Post('create')
+  @ApiBody({ description: 'Create a new hero', type: [CreateHeroDto] })
+  @ApiResponse({
+    status: 201,
+    description: 'New hero was successfully created.',
+  })
+  @ApiResponse({ status: 500, description: 'Internal server error.' })
   async createHero(@Body() createHeroDto: CreateHeroDto) {
     const { nickname, realName, originDescription, superPowers, catchPhrase } =
       createHeroDto;

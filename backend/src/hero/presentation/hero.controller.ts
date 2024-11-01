@@ -10,7 +10,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { CreateHeroDto } from './dto/create-hero.dto';
-import { HeroesService } from '../domain/heroes.service';
+import { HeroService } from '../domain/hero.service';
 import {
   ApiBody,
   ApiConsumes,
@@ -21,11 +21,11 @@ import {
 import { HeroDto } from './dto/hero.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 
-@Controller('heroes')
-export class HeroesController {
+@Controller('hero')
+export class HeroController {
   logger: Logger;
-  constructor(private readonly heroesService: HeroesService) {
-    this.logger = new Logger(HeroesController.name);
+  constructor(private readonly heroService: HeroService) {
+    this.logger = new Logger(HeroController.name);
   }
 
   @Post('create')
@@ -47,7 +47,7 @@ export class HeroesController {
     const { nickname, realName, originDescription, superPowers, catchPhrase } =
       createHeroDto;
     try {
-      return await this.heroesService.createHero(
+      return await this.heroService.createHero(
         {
           nickname,
           realName,

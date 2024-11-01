@@ -1,19 +1,19 @@
 import { ConfigService } from '@nestjs/config';
-import { CreateHeroPersistence, HeroesRepository } from './heroes.repository';
+import { CreateHeroPersistence, HeroRepository } from './hero.repository';
 import { Injectable, Logger } from '@nestjs/common';
 import { Pool } from 'pg';
 import { DatabaseConfig } from 'src/config/configuration';
 import { Hero } from '../domain/entities/hero.entity';
-import { HeroesMapper } from './heroes.mapper';
+import { HeroMapper } from './hero.mapper';
 
 @Injectable()
-export class PgRepository extends HeroesRepository {
+export class PgRepository extends HeroRepository {
   pool: Pool;
   logger: Logger;
   constructor(private readonly configService: ConfigService) {
     super();
     this.logger = new Logger(PgRepository.name);
-    const config = configService.get<DatabaseConfig>('database');
+    const config = this.configService.get<DatabaseConfig>('database');
     this.pool = new Pool({
       connectionString: config.connectionString,
     });
@@ -32,7 +32,7 @@ export class PgRepository extends HeroesRepository {
       ];
       const { rows } = await client.query(queryText, queryInsert);
       await client.query('COMMIT');
-      return HeroesMapper.toDomain(rows[0]);
+      return HeroMapper.toDomain(rows[0]);
     } catch (error) {
       await client.query('ROLLBACK');
       this.logger.error(error);

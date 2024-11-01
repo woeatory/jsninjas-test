@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { HeroesModule } from './heroes/application/heroes.module';
+import { HeroModule as HeroModule } from './hero/application/hero.module';
 import configuration from './config/configuration';
 
 @Module({
-  imports: [ConfigModule.forRoot({ load: [configuration] }), HeroesModule],
+  imports: [ConfigModule.forRoot({ load: [configuration] }), HeroModule],
 })
 export class AppModule {}

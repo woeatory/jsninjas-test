@@ -9,7 +9,7 @@ interface PersistentHero {
   catchPharse: string;
 }
 
-export class HeroesMapper {
+export class HeroMapper {
   static toDomain(persistentHero: PersistentHero): Hero {
     return new Hero(
       persistentHero.heroId,

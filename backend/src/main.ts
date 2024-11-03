@@ -10,7 +10,7 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const logger: Logger = new Logger('BOOTSTRAP');
 
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Heroes API')

@@ -1,6 +1,6 @@
 export class HeroImage {
   constructor(
-    public imageId: number,
+    public id: number,
     public heroId: number,
     public image: Uint8Array,
   ) {}

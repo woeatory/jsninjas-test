@@ -4,10 +4,9 @@ import { HeroController } from '../presentation/hero.controller';
 import { HeroRepository } from '../repository/hero.repository';
 import { PgRepository } from '../repository/pg.repository';
 import { ConfigModule } from '@nestjs/config';
-import { HeroImageModule } from '../../hero-image/application/hero-image.module';
 
 @Module({
-  imports: [ConfigModule, HeroImageModule],
+  imports: [ConfigModule],
   providers: [
     HeroService,
     {

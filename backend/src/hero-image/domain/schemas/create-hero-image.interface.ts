@@ -1,4 +1,4 @@
 export interface CreateHeroImage {
   heroId: number;
-  image: Buffer;
+  images: Uint8Array[];
 }

@@ -1,8 +1,17 @@
+import { HeroImage } from 'src/hero-image/domain/entities/hero-image.entity';
 import { Hero } from '../domain/entities/hero.entity';
-import { CreateHero } from '../domain/schemas/create-hero.interface';
-
-export type CreateHeroPersistence = CreateHero;
 
 export abstract class HeroRepository {
-  abstract createHero(data: CreateHeroPersistence): Promise<Hero>;
+  abstract createHero(data: Hero): Promise<number>;
+  abstract getHero(id: number): Promise<Hero>;
+  abstract getHeroeListPaged(
+    skipCount: number,
+    maxCount: number,
+  ): Promise<Hero[]>;
+  abstract updateHero(
+    data: Hero,
+    deleteImagesIds: number[],
+    addImages: HeroImage[],
+  ): Promise<number>;
+  abstract deleteHero(id: number): Promise<void>;
 }

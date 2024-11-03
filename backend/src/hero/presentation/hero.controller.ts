@@ -1,25 +1,32 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
+  InternalServerErrorException,
   Logger,
+  Param,
+  ParseIntPipe,
   Post,
-  UploadedFile,
+  Put,
+  Query,
   UseInterceptors,
 } from '@nestjs/common';
 import { CreateHeroDto } from './dto/create-hero.dto';
 import { HeroService } from '../domain/hero.service';
 import {
   ApiBody,
-  ApiConsumes,
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
-  ApiQuery,
+  ApiOkResponse,
 } from '@nestjs/swagger';
 import { HeroDto } from './dto/hero.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { GetHeroPagedListDto } from './dto/get-hero-paged-list.dto';
+import { GetHeroListDto } from './dto/get-hero-list.dto';
+import { UpdateHeroDto } from './dto/update-hero.dto';
 
 @Controller('hero')
 export class HeroController {
@@ -29,44 +36,62 @@ export class HeroController {
   }
 
   @Post('create')
-  @ApiConsumes('multipart/form-data')
   @ApiBody({
     description: 'Create a new hero',
     type: CreateHeroDto,
   })
   @ApiCreatedResponse({
     description: 'New hero was successfully created.',
-    type: HeroDto,
+    type: Number,
   })
-  @ApiInternalServerErrorResponse({ description: 'Internal server error.' })
+  @ApiInternalServerErrorResponse({
+    description: "Couldn't create a new hero.",
+  })
   @UseInterceptors(FileInterceptor('image'))
-  async createHero(
-    @Body() createHeroDto: CreateHeroDto,
-    @UploadedFile() file?: Express.Multer.File,
-  ) {
-    const { nickname, realName, originDescription, superPowers, catchPhrase } =
-      createHeroDto;
+  async createHero(@Body() dto: CreateHeroDto) {
     try {
-      return await this.heroService.createHero(
-        {
-          nickname,
-          realName,
-          originDescription,
-          superPowers,
-          catchPhrase,
-        },
-        file.buffer,
-      );
+      return await this.heroService.createHero(dto);
     } catch (error) {
-      this.logger.error(error);
-      throw new HttpException(
-        "Couldn't create a new hero",
-        HttpStatus.INTERNAL_SERVER_ERROR,
+      throw (
+        (new HttpException(
+          "Couldn't create a new hero",
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        ),
+        error)
       );
     }
   }
 
+  @Get(':id')
+  @ApiOkResponse({ type: HeroDto })
+  async getHeroDetails(@Param('id', ParseIntPipe) id: number) {
+    return await this.heroService.getHero(id);
+  }
+
   @Get()
-  @ApiQuery({})
-  async getHero() {}
+  @ApiOkResponse({ type: [GetHeroListDto] })
+  async getHeroesList(@Query() query: GetHeroPagedListDto) {
+    return await this.heroService.getHeroesPagedList(
+      query.skipCount,
+      query.maxCount,
+    );
+  }
+
+  @Put()
+  @ApiOkResponse({ type: Number })
+  async updateHero(@Body() body: UpdateHeroDto) {
+    return await this.heroService.updateHeroDetails(body);
+  }
+
+  @Delete(':id')
+  @ApiOkResponse({ description: 'Hero deleted.' })
+  @ApiInternalServerErrorResponse({ description: "Couldn't delete a hero" })
+  async deleteHero(@Query('id', ParseIntPipe) id: number) {
+    try {
+      await this.heroService.deleteHero(id);
+    } catch (error) {
+      this.logger.error(error);
+      throw new InternalServerErrorException("Couldn't delete a hero");
+    }
+  }
 }

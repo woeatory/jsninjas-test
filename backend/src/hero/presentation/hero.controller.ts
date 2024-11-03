@@ -25,8 +25,8 @@ import {
 import { HeroDto } from './dto/hero.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { GetHeroPagedListDto } from './dto/get-hero-paged-list.dto';
-import { GetHeroListDto } from './dto/get-hero-list.dto';
 import { UpdateHeroDto } from './dto/update-hero.dto';
+import { PagedHeroListResultDto } from './dto/paged-hero-list-result.dto';
 
 @Controller('hero')
 export class HeroController {
@@ -69,12 +69,15 @@ export class HeroController {
   }
 
   @Get()
-  @ApiOkResponse({ type: [GetHeroListDto] })
-  async getHeroesList(@Query() query: GetHeroPagedListDto) {
-    return await this.heroService.getHeroesPagedList(
+  @ApiOkResponse({ type: [PagedHeroListResultDto] })
+  async getHeroesList(
+    @Query() query: GetHeroPagedListDto,
+  ): Promise<PagedHeroListResultDto> {
+    const res = await this.heroService.getHeroesPagedList(
       query.skipCount,
       query.maxCount,
     );
+    return { heroes: res.heroes, totalCount: res.totalCount };
   }
 
   @Put()

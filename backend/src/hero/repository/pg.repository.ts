@@ -1,10 +1,10 @@
 import { ConfigService } from '@nestjs/config';
 import { HeroRepository } from './hero.repository';
 import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
-import { Pool } from 'pg';
+import { Pool, types } from 'pg';
 import { DatabaseConfig } from 'src/config/configuration';
 import { Hero } from '../domain/entities/hero.entity';
-import { HeroImage } from 'src/hero-image/domain/entities/hero-image.entity';
+import { HeroImage } from '../domain/entities/hero-image.entity';
 
 @Injectable()
 export class PgRepository extends HeroRepository implements OnModuleDestroy {
@@ -14,6 +14,7 @@ export class PgRepository extends HeroRepository implements OnModuleDestroy {
     super();
     this.logger = new Logger(PgRepository.name);
     const config = this.configService.get<DatabaseConfig>('database');
+    types.setTypeParser(20, (val) => parseInt(val, 10));
     this.pool = new Pool({
       connectionString: config.connectionString,
     });
@@ -72,10 +73,7 @@ export class PgRepository extends HeroRepository implements OnModuleDestroy {
     }
   }
 
-  async getHeroeListPaged(
-    skipCount: number,
-    maxCount: number,
-  ): Promise<Hero[]> {
+  async getHeroeListPaged(skipCount: number, maxCount: number) {
     const client = await this.pool.connect();
     try {
       const queryText = `SELECT 
@@ -102,9 +100,11 @@ export class PgRepository extends HeroRepository implements OnModuleDestroy {
         $1 
     OFFSET 
         $2`;
-      const { rows } = await client.query(queryText, [maxCount, skipCount]);
-      const result = rows;
-      return result;
+      const heroes = (await client.query(queryText, [maxCount, skipCount]))
+        .rows as Hero[];
+      const totalCount = (await client.query('SELECT COUNT(*) FROM "Hero"'))
+        .rows[0].count as number;
+      return { totalCount, heroes };
     } catch (error) {
       this.logger.error(error);
     } finally {

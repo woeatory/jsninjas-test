@@ -3,7 +3,7 @@ import { HeroRepository as HeroRepositry } from '../repository/hero.repository';
 import { Hero } from './entities/hero.entity';
 import { CreateHeroDto } from '../presentation/dto/create-hero.dto';
 import { UpdateHeroDto } from '../presentation/dto/update-hero.dto';
-import { HeroImage } from 'src/hero-image/domain/entities/hero-image.entity';
+import { HeroImage } from './entities/hero-image.entity';
 @Injectable()
 export class HeroService {
   constructor(private readonly heroRepository: HeroRepositry) {}
@@ -26,14 +26,10 @@ export class HeroService {
 
   async getHero(id: number): Promise<Hero> {
     const hero = await this.heroRepository.getHero(id);
-    // if (hero) hero.images = await this.heroImageService.getImages(id);
     return hero;
   }
 
-  async getHeroesPagedList(
-    skipCount: number,
-    maxCount: number,
-  ): Promise<Hero[]> {
+  async getHeroesPagedList(skipCount: number, maxCount: number) {
     const heroes = await this.heroRepository.getHeroeListPaged(
       skipCount,
       maxCount,

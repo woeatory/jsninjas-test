@@ -6,12 +6,11 @@ import { AppConfig } from './config/configuration';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { cors: { origin: '*' } });
   const configService = app.get(ConfigService);
   const logger: Logger = new Logger('BOOTSTRAP');
 
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
-
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Heroes API')
     .setDescription('The heroes API description')

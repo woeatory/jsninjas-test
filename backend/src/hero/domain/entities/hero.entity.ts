@@ -1,4 +1,4 @@
-import { HeroImage } from 'src/hero-image/domain/entities/hero-image.entity';
+import { HeroImage } from './hero-image.entity';
 
 export class Hero {
   constructor(

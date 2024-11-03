@@ -65,7 +65,21 @@ export class HeroController {
   @Get(':id')
   @ApiOkResponse({ type: HeroDto })
   async getHeroDetails(@Param('id', ParseIntPipe) id: number) {
-    return await this.heroService.getHero(id);
+    const result = await this.heroService.getHero(id);
+    const images = result.images.map((image) => ({
+      id: image.id,
+      heroId: image.heroId,
+      image: image.image,
+    }));
+    return {
+      id: result.id,
+      nickname: result.nickname,
+      realName: result.realName,
+      originDescription: result.originDescription,
+      superpowers: result.superpowers,
+      catchPhrase: result.catchPhrase,
+      images,
+    };
   }
 
   @Get()
@@ -83,7 +97,7 @@ export class HeroController {
   @Put()
   @ApiOkResponse({ type: Number })
   async updateHero(@Body() body: UpdateHeroDto) {
-    return await this.heroService.updateHeroDetails(body);
+    await this.heroService.updateHeroDetails(body);
   }
 
   @Delete(':id')

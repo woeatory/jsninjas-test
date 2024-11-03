@@ -44,5 +44,5 @@ export class HeroDto {
     format: 'binary',
     type: [HeroImageDto],
   })
-  images: HeroImageDto[];
+  images?: HeroImageDto[];
 }

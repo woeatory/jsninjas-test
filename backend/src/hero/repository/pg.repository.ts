@@ -116,7 +116,7 @@ export class PgRepository extends HeroRepository implements OnModuleDestroy {
     hero: Hero,
     deleteImagesIds: number[],
     addImages: HeroImage[],
-  ): Promise<number> {
+  ): Promise<void> {
     const client = await this.pool.connect();
     try {
       const values = [];
@@ -129,11 +129,11 @@ export class PgRepository extends HeroRepository implements OnModuleDestroy {
       if (hero.catchPhrase)
         values.push(`"catchPhrase" = '${hero.catchPhrase}'`);
 
-      const updateHeroQueryText = `UPDATE "Hero" SET ${values.join(', ')} WHERE "id" = ${hero.id} RETURNING id`;
       await client.query('BEGIN');
-
-      const { rows } = await client.query(updateHeroQueryText);
-      const result = rows[0] as number;
+      if (values.length > 0) {
+        const updateHeroQueryText = `UPDATE "Hero" SET ${values.join(', ')} WHERE "id" = ${hero.id} RETURNING id`;
+        await client.query(updateHeroQueryText);
+      }
 
       for (const image of hero.images) {
         const updateImageQueryText = `UPDATE "HeroImage" SET "image" = $1 WHERE "id" = $2`;
@@ -141,22 +141,21 @@ export class PgRepository extends HeroRepository implements OnModuleDestroy {
         await client.query(updateImageQueryText, values);
       }
 
-      if (deleteImagesIds.length > 0)
+      if (deleteImagesIds?.length > 0)
         await client.query(
           `DELETE FROM "HeroImage" WHERE ("heroId") in (${deleteImagesIds.join(', ')})`,
         );
 
-      const images = addImages.map((value) => value.image);
-      const heroIds = addImages.map((value) => value.heroId);
-      const addImagesQueryText = `
-      INSERT INTO "HeroImage" ("heroId", "image")
-      SELECT unnest($1::bigint[]), unnest($2::bytea[])
-    `;
-      const addImagesQueryValues = [heroIds, images];
-      await client.query(addImagesQueryText, addImagesQueryValues);
-
+      if (addImages?.length > 0) {
+        const images = addImages.map((value) => value.image);
+        const heroIds = addImages.map((value) => value.heroId);
+        const addImagesQueryText = `
+        INSERT INTO "HeroImage" ("heroId", "image")
+        SELECT unnest($1::bigint[]), unnest($2::bytea[])`;
+        const addImagesQueryValues = [heroIds, images];
+        await client.query(addImagesQueryText, addImagesQueryValues);
+      }
       await client.query('COMMIT');
-      return result;
     } catch (error) {
       this.logger.error(error);
       await client.query('ROLLBACK');

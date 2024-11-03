@@ -21,8 +21,9 @@ services:
       - db-password
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
+      - POSTGRES_PASSWORD=12345
       - POSTGRES_DB=application
+      # - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./backend/database/structure.sql:/docker-entrypoint-initdb.d/1.sql
@@ -36,15 +37,26 @@ services:
       retries: 5
     restart: always
 
-  pgadmin:
-    container_name: pgadmin
-    image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: "user@domain.com"
-      PGADMIN_DEFAULT_PASSWORD: "simplepass"
+  client-heroes:
+    build:
+      context: ./frontend/
+      dockerfile: Dockerfile
+    container_name: client-heroes
+    # depends_on:
+    # api-heroes:
+    #   condition: service_healthy
     ports:
-      - "5050:80"
-    restart: unless-stopped
+      - 80:80
+    restart: always
+  # pgadmin:
+  #   container_name: pgadmin
+  #   image: dpage/pgadmin4
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: "user@domain.com"
+  #     PGADMIN_DEFAULT_PASSWORD: "simplepass"
+  #   ports:
+  #     - "5050:80"
+  #   restart: unless-stopped
 volumes:
   postgres_data:
 secrets:

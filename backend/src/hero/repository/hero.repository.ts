@@ -9,6 +9,6 @@ export abstract class HeroRepository {
     data: Hero,
     deleteImagesIds: number[],
     addImages: HeroImage[],
-  ): Promise<number>;
+  ): Promise<void>;
   abstract deleteHero(id: number): Promise<void>;
 }

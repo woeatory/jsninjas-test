@@ -39,8 +39,10 @@ export class HeroService {
 
   async updateHeroDetails(update: UpdateHeroDto) {
     const heroImages: HeroImage[] = [];
-    update.images.forEach((image) =>
-      heroImages.push(new HeroImage(image.id, image.heroId, image.image)),
+    update.images?.forEach((image) =>
+      heroImages.push(
+        new HeroImage(image.id, image.heroId, Uint8Array.from(image.image)),
+      ),
     );
     const hero = new Hero(
       update.id,
@@ -52,13 +54,13 @@ export class HeroService {
       heroImages,
     );
     const newImages: HeroImage[] = [];
-    update.uploadImages.map((image) =>
+    update.uploadImages?.forEach((image) =>
       newImages.push(new HeroImage(-1, image.heroId, image.image)),
     );
     return await this.heroRepository.updateHero(
       hero,
       update.deleteImagesIds,
-      update.uploadImages,
+      newImages,
     );
   }
 

@@ -91,7 +91,7 @@ const HeroDetailsDialog = ({
             {hero.images?.map((image) => (
               <Box sx={{ maxWidth: '70px', maxHeight: '70px' }}>
                 <img
-                  src={`data:image/jpeg;base64,${mydecode(image.image)}`}
+                  src={`data:image/jpeg;base64,${image.image}`}
                   alt={hero.nickname}
                   style={{ width: '100%', height: '100%' }}
                 />
@@ -107,9 +107,4 @@ const HeroDetailsDialog = ({
   );
 };
 
-function mydecode(buff: Buffer) {
-  const res = buff.toString('base64');
-  console.log(res);
-  return res;
-}
 export default HeroDetailsDialog;
